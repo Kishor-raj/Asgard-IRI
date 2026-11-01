@@ -1,0 +1,13 @@
+{
+  "name": "asgard-iri",
+  "version": "1.0.0",
+  "private": true,
+  "description": "ASGARD International Foundation for Research and Innovation",
+  "scripts": {
+    "migrate": "npm --prefix server run migrate",
+    "seed": "npm --prefix server run seed",
+    "db:setup": "npm --prefix server run db:setup",
+    "server": "npm --prefix server run dev",
+    "client": "npm --prefix client run dev"
+  }
+}

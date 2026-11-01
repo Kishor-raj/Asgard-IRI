@@ -1,0 +1,103 @@
+{
+  "nav": {
+    "home": "Home",
+    "about": "About",
+    "research": "Research Labs",
+    "journals": "Journals",
+    "conferences": "Conferences",
+    "academy": "Academy",
+    "opportunities": "Opportunities",
+    "consultancy": "Consultancy",
+    "contact": "Contact",
+    "public_school": "Public School",
+    "partners": "Partners",
+    "login": "Sign In",
+    "register": "Register",
+    "dashboard": "Dashboard",
+    "admin": "Admin Console",
+    "logout": "Sign Out"
+  },
+  "home": {
+    "tagline": "Autonomous International Research Institution",
+    "heroTitle": "Advancing Frontier Science, Interdisciplinary Innovation & Global Scholar Fellowship",
+    "heroDesc": "ASGARD Institute of Research & Innovation convenes premier researchers, pioneers transformative technology prototypes, and publishes high-impact open-access journals.",
+    "exploreResearch": "Explore Research",
+    "viewConferences": "Conferences & Symposia",
+    "joinAcademy": "ASGARD Academy",
+    "stats": {
+      "countries": "Countries Reached",
+      "scholars": "Scholars & Fellows",
+      "publications": "Peer-Reviewed Papers",
+      "conferences": "Conferences Hosted"
+    },
+    "features": {
+      "title": "Core Institutional Pillars",
+      "subtitle": "Discover our integrated ecosystem supporting researchers across every stage of the discovery cycle.",
+      "researchTitle": "Frontier Research Labs",
+      "researchDesc": "Specialised institutes in Quantum Computing, Artificial Intelligence, Renewable Energy, and Biotechnology.",
+      "publishingTitle": "Open Access Journals",
+      "publishingDesc": "Rigorous double-blind peer review, high editorial ethics, and global indexing in academic repositories.",
+      "conferencesTitle": "Global Academic Summits",
+      "conferencesDesc": "International assemblies convening distinguished keynote speakers, emerging doctoral researchers, and industry pioneers.",
+      "academyTitle": "ASGARD Academy",
+      "academyDesc": "High-impact Faculty Development Programmes (FDP), AI bootcamps, and research methodology masterclasses."
+    }
+  },
+  "about": {
+    "title": "About ASGARD-IRI",
+    "subtitle": "A globally committed non-governmental scientific foundation driving ethical research and technological empowerment.",
+    "missionTitle": "Our Mission",
+    "missionDesc": "To accelerate scientific breakthroughs, facilitate interdisciplinary research collaboration, and provide equitable open-access knowledge platforms across the world.",
+    "visionTitle": "Our Vision",
+    "visionDesc": "To be recognized as a world-leading autonomous research collective fostering boundary-pushing discoveries that resolve urgent planetary and humanitarian challenges.",
+    "valuesTitle": "Core Institutional Values",
+    "integrity": "Academic Integrity & Rigor",
+    "inclusivity": "Global Open-Access Inclusivity",
+    "innovation": "Pioneering Technological Innovation"
+  },
+  "academy": {
+    "title": "ASGARD Academy",
+    "subtitle": "Academic Excellence & Professional Upskilling",
+    "desc": "High-caliber instructional modules for university faculty, PhD scholars, and scientific professionals led by renowned domain experts.",
+    "allPrograms": "All Programmes",
+    "registerNow": "Register Now",
+    "duration": "Duration",
+    "mode": "Instruction Mode",
+    "seats": "Seats Available",
+    "enrollmentSuccess": "Enrollment Confirmed & Verified"
+  },
+  "opportunities": {
+    "title": "Opportunities & Grants",
+    "subtitle": "Empowering Scholars, Innovators & Research Teams",
+    "desc": "Explore active calls for papers, funded postdoctoral fellowships, visiting scholar programmes, and seed innovation grants.",
+    "allTypes": "All Categories",
+    "applyNow": "Apply Now",
+    "deadline": "Deadline",
+    "stipend": "Grant / Stipend",
+    "requirements": "Eligibility Requirements"
+  },
+  "contact": {
+    "title": "Contact Secretariat",
+    "subtitle": "We Welcome Scholarly Inquiries & Institutional Partnerships",
+    "desc": "Reach out to ASGARD International Foundation secretariat for research inquiries, partnerships, and publishing correspondence.",
+    "name": "Full Name",
+    "email": "Email Address",
+    "subject": "Subject / Inquired Unit",
+    "message": "Detailed Message",
+    "send": "Send Message",
+    "offices": "Secretariat Headquarters"
+  },
+  "common": {
+    "search": "Search...",
+    "filter": "Filter",
+    "loading": "Loading...",
+    "save": "Save Changes",
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "viewDetails": "View Details",
+    "download": "Download",
+    "verify": "Verify Credential",
+    "language": "Language",
+    "poweredBy": "Powered by ASGARD Institute of Research & Innovation"
+  }
+}

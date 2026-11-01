@@ -1,0 +1,158 @@
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,500;1,600&family=Inter:wght@300;400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* CSS custom properties for non-Tailwind contexts */
+:root {
+  --ink-900: #03060f;
+  --ink-800: #060b18;
+  --ink-700: #091021;
+  --ink-600: #0c142a;
+  --ink-500: #101a36;
+  --parchment: #f7f3ea;
+  --parchment-2: #efe8d8;
+  --cream: #fbf9f3;
+  --gold: #c9a227;
+  --gold-bright: #e3bd4a;
+  --gold-soft: #d8b85a;
+  --gold-deep: #9c7a1c;
+  --line: rgba(201,162,39,.22);
+  --line-strong: rgba(201,162,39,.42);
+  --text: #e9ecf5;
+  --text-dim: #a7b0c4;
+  --text-mute: #6b7591;
+  --serif: "Cormorant Garamond", Georgia, serif;
+  --sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --maxw: 1240px;
+  --r-sm: 10px;
+  --r: 16px;
+  --r-lg: 22px;
+  --shadow-soft: 0 18px 50px -24px rgba(8,11,22,.55);
+  --shadow-card: 0 30px 60px -30px rgba(8,11,22,.6);
+
+  /* Legacy compatibility */
+  --color-navy: #0B1F4B;
+  --color-navy-dark: #071540;
+  --color-navy-light: #1A3570;
+  --color-gold: #c9a227;
+  --color-gold-light: #e3bd4a;
+  --color-gold-dark: #9c7a1c;
+  --color-white: #FFFFFF;
+  --color-grey-50: #F8F9FB;
+  --color-grey-200: #E2E6EE;
+  --color-grey-900: #111827;
+  --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
+  --font-display: 'Cormorant Garamond', 'Poppins', 'Inter', sans-serif;
+}
+
+/* Base resets */
+*, *::before, *::after { box-sizing: border-box; }
+html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+body {
+  font-family: var(--sans);
+  background: var(--cream);
+  color: #1a2138;
+  line-height: 1.65;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+::selection {
+  background: var(--gold);
+  color: var(--ink-900);
+}
+
+/* Accessibility focus ring */
+:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 2px;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: #060b18; }
+::-webkit-scrollbar-thumb { background: #c9a227; border-radius: 3px; }
+
+/* Utility: hide scrollbar */
+.scrollbar-none {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
+
+/* Prevent horizontal overflow on all pages */
+#root {
+  overflow-x: hidden;
+}
+
+/* Reference Typography & Utility classes */
+.font-cormorant {
+  font-family: var(--serif);
+}
+
+.overline {
+  font-family: var(--sans);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--gold);
+  display: inline-flex;
+  align-items: center;
+  text-decoration: none !important;
+  text-decoration-line: none !important;
+}
+.overline::before,
+.overline::after {
+  display: none !important;
+  content: none !important;
+}
+.overline.center {
+  justify-content: center;
+}
+
+.btn-gold {
+  background: linear-gradient(135deg, var(--gold-bright), var(--gold));
+  color: var(--ink-900);
+  box-shadow: 0 14px 30px -12px rgba(201,162,39,.6);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.95rem 1.6rem;
+  border-radius: 999px;
+  font-weight: 600;
+  font-size: 0.92rem;
+  letter-spacing: 0.01em;
+  transition: all 0.35s cubic-bezier(.16,.84,.44,1);
+  white-space: nowrap;
+}
+.btn-gold:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 20px 40px -12px rgba(227,189,74,.7);
+}
+
+.btn-ghost {
+  color: #fff;
+  background: var(--ink-700);
+  border: 1px solid rgba(201,162,39,.35);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.95rem 1.6rem;
+  border-radius: 999px;
+  font-weight: 600;
+  font-size: 0.92rem;
+  letter-spacing: 0.01em;
+  transition: all 0.35s cubic-bezier(.16,.84,.44,1);
+  white-space: nowrap;
+}
+.btn-ghost:hover {
+  border-color: var(--gold);
+  color: var(--gold-bright);
+  background: var(--ink-600);
+}
