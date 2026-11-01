@@ -8,6 +8,7 @@ import Input from '../../components/ui/Input';
 import Select from '../../components/ui/Select';
 import Button from '../../components/common/Button';
 import { register as registerApi } from '../../services/auth.service';
+import { getErrorMessage, API_BASE_URL } from '../../services/api';
 
 const publicRoles = [
   { value: 'researcher',            label: 'Researcher (Institutional/Independent)' },
@@ -51,7 +52,7 @@ export default function RegisterPage() {
       setIsSubmitted(true);
       toast.success('Registration submitted!');
     } catch (err) {
-      toast.error(err.response?.data?.error || 'Registration failed. Try again.');
+      toast.error(getErrorMessage(err, 'Registration failed. Try again.'));
     } finally {
       setLoading(false);
     }
@@ -155,7 +156,7 @@ export default function RegisterPage() {
 
       <div className="grid grid-cols-1 gap-3">
         <a
-          href={`${import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000/api/v1'}/auth/google`}
+          href={`${API_BASE_URL}/auth/google`}
           className="flex items-center justify-center gap-2 border border-grey-200 rounded-lg px-4 py-2.5 text-sm font-medium text-grey-900 hover:bg-grey-50 transition-colors"
         >
           Google

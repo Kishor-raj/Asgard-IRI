@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
+import { getErrorMessage } from '../services/api';
 
 const useFetch = (fetchFn, deps = []) => {
   const [data, setData] = useState(null);
@@ -14,7 +15,7 @@ const useFetch = (fetchFn, deps = []) => {
         if (!cancelled) setData(res);
       })
       .catch((err) => {
-        if (!cancelled) setError(err.response?.data?.error || 'Something went wrong.');
+        if (!cancelled) setError(getErrorMessage(err, 'Something went wrong.'));
       })
       .finally(() => {
         if (!cancelled) setLoading(false);

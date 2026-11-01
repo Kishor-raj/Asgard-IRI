@@ -7,6 +7,7 @@ import Input from '../../components/ui/Input';
 import Button from '../../components/common/Button';
 import { useAuth } from '../../context/AuthContext';
 import { login as loginApi } from '../../services/auth.service';
+import { getErrorMessage, API_BASE_URL } from '../../services/api';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
@@ -36,7 +37,7 @@ export default function LoginPage() {
         navigate('/dashboard');
       }
     } catch (err) {
-      toast.error(err.response?.data?.error || 'Invalid credentials.');
+      toast.error(getErrorMessage(err, 'Invalid credentials.'));
     } finally {
       setLoading(false);
     }
@@ -99,7 +100,7 @@ export default function LoginPage() {
 
       <div className="grid grid-cols-1 gap-3">
         <a
-          href={`${import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000/api/v1'}/auth/google`}
+          href={`${API_BASE_URL}/auth/google`}
           className="flex items-center justify-center gap-2 border border-grey-200 rounded-lg px-4 py-2.5 text-sm font-medium text-grey-900 hover:bg-grey-50 transition-colors"
         >
           Google
