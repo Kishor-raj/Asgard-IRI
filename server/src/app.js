@@ -15,6 +15,11 @@ const pool        = require('./config/db');
 
 const app = express();
 
+// Trust reverse proxy (required for Render/Heroku to properly handle HTTPS & secure cookies)
+if (process.env.NODE_ENV === 'production') {
+  app.set('trust proxy', 1);
+}
+
 // Security & middleware
 app.use(helmet());
 app.use(cors({ origin: process.env.CLIENT_URL, credentials: true }));
@@ -32,7 +37,7 @@ app.use(session({
   cookie: {
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',
-    sameSite: 'lax',
+    sameSite: process.env.COOKIE_SAME_SITE || (process.env.NODE_ENV === 'production' ? 'none' : 'lax'),
     maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
   },
 }));
