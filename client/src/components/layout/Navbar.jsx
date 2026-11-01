@@ -114,13 +114,13 @@ export default function Navbar() {
             <img
               src="/logo.png"
               alt="ASGARD-IRI"
-              className="w-9 h-9 sm:w-11 sm:h-11 object-contain shrink-0 rounded-full transition-transform duration-300 group-hover:scale-105"
+              className="w-12 h-12 sm:w-14 sm:h-14 lg:w-16 lg:h-16 object-contain shrink-0 rounded-full transition-transform duration-300 group-hover:scale-105 drop-shadow-[0_2px_8px_rgba(201,162,39,0.3)]"
             />
             <span className="flex flex-col leading-none min-w-0">
-              <span className="font-['Cormorant_Garamond',Georgia,serif] font-semibold text-xl sm:text-2xl tracking-[0.04em] text-white">
+              <span className="font-['Cormorant_Garamond',Georgia,serif] font-semibold text-xl sm:text-2xl lg:text-[1.75rem] tracking-[0.04em] text-white">
                 ASGARD
               </span>
-              <span className="text-[0.58rem] sm:text-[0.62rem] tracking-[0.28em] sm:tracking-[0.34em] text-[#c9a227] uppercase mt-0.5 sm:mt-1 font-semibold">
+              <span className="text-[0.62rem] sm:text-[0.68rem] lg:text-[0.74rem] tracking-[0.3em] sm:tracking-[0.36em] text-[#c9a227] uppercase mt-0.5 sm:mt-1 font-semibold">
                 IRI
               </span>
             </span>

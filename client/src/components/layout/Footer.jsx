@@ -34,17 +34,17 @@ export default function Footer() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-8 sm:gap-10 pb-16">
           {/* Brand Column */}
           <div className="col-span-1 sm:col-span-2 lg:col-span-2">
-            <Link to="/" className="inline-flex items-center gap-3.5 text-white mb-5 group">
+            <Link to="/" className="inline-flex items-center gap-3.5 sm:gap-4 text-white mb-5 group">
               <img
                 src="/logo.png"
                 alt="ASGARD-IRI"
-                className="w-11 h-11 object-contain shrink-0 rounded-full transition-transform duration-300 group-hover:scale-105"
+                className="w-14 h-14 sm:w-16 sm:h-16 lg:w-20 lg:h-20 object-contain shrink-0 rounded-full transition-transform duration-300 group-hover:scale-105 drop-shadow-[0_2px_12px_rgba(201,162,39,0.3)]"
               />
               <span className="flex flex-col leading-none">
-                <span className="font-['Cormorant_Garamond',Georgia,serif] font-semibold text-2xl tracking-[0.04em] text-white">
+                <span className="font-['Cormorant_Garamond',Georgia,serif] font-semibold text-2xl sm:text-3xl lg:text-[2rem] tracking-[0.04em] text-white">
                   ASGARD
                 </span>
-                <span className="text-[0.62rem] tracking-[0.34em] text-[#c9a227] uppercase mt-1 font-semibold">
+                <span className="text-[0.62rem] sm:text-[0.68rem] lg:text-[0.74rem] tracking-[0.34em] text-[#c9a227] uppercase mt-1 font-semibold">
                   IRI
                 </span>
               </span>

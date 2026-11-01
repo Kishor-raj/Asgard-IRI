@@ -355,9 +355,16 @@ export default function HomePage() {
         <div className="max-w-[1240px] mx-auto px-5 sm:px-7 relative z-10 w-full">
           <div className="max-w-[980px]">
             <RevealDiv delay={0}>
-              <span className="overline mb-6 no-underline">
-                Autonomous International Research Institution
-              </span>
+              <div className="flex items-center gap-3.5 sm:gap-4 mb-6">
+                <img
+                  src="/logo.png"
+                  alt="ASGARD-IRI Emblem"
+                  className="w-12 h-12 sm:w-16 sm:h-16 md:w-20 md:h-20 object-contain rounded-full border border-[#c9a227]/40 shadow-[0_0_24px_rgba(201,162,39,0.35)] shrink-0 transition-transform duration-300 hover:scale-105"
+                />
+                <span className="overline no-underline">
+                  Autonomous International Research Institution
+                </span>
+              </div>
             </RevealDiv>
 
             <RevealDiv delay={80}>
