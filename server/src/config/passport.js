@@ -36,7 +36,28 @@ const findOrCreateOAuthUser = async (provider, oauthId, email, fullName, avatarU
 
 const googleClientId = (process.env.GOOGLE_CLIENT_ID || '').trim();
 const googleClientSecret = (process.env.GOOGLE_CLIENT_SECRET || '').trim();
-const googleCallbackUrl = (process.env.GOOGLE_CALLBACK_URL || '').trim();
+
+const resolveGoogleCallbackUrl = () => {
+  const explicit = (process.env.GOOGLE_CALLBACK_URL || '').trim();
+  if (explicit) {
+    if (explicit.includes('/callback')) {
+      return explicit;
+    }
+    return `${explicit.replace(/\/+$/, '')}/api/v1/auth/google/callback`;
+  }
+
+  const backendUrl = (process.env.BACKEND_URL || '').trim();
+  if (backendUrl) {
+    return `${backendUrl.replace(/\/+$/, '')}/api/v1/auth/google/callback`;
+  }
+
+  const port = process.env.PORT || 5000;
+  return process.env.NODE_ENV === 'production'
+    ? 'https://asgard-iri.onrender.com/api/v1/auth/google/callback'
+    : `http://localhost:${port}/api/v1/auth/google/callback`;
+};
+
+const googleCallbackUrl = resolveGoogleCallbackUrl();
 
 if (googleClientId && googleClientSecret) {
   passport.use(new GoogleStrategy(

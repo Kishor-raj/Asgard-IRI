@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useEffect } from 'react';
+import { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import api from '../services/api';
 
 const AuthContext = createContext(null);
@@ -8,15 +8,37 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // On mount, check if a valid session exists server-side
+    // If a token was returned in the query parameter (e.g. redirected anywhere with ?token=...)
+    if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search);
+      const urlToken = params.get('token');
+      if (urlToken) {
+        localStorage.setItem('asgard_token', urlToken);
+        // Clean the token from the browser address bar without triggering reload
+        params.delete('token');
+        const query = params.toString();
+        const cleanUrl = window.location.pathname + (query ? `?${query}` : '') + window.location.hash;
+        window.history.replaceState({}, document.title, cleanUrl);
+      }
+    }
+
+    // On mount, check if a valid session/token exists server-side
     api.get('/auth/me')
       .then((res) => setUser(res.data?.data || null))
-      .catch(() => setUser(null)) // 401 means no active session — that's expected
+      .catch(() => {
+        // 401 means no active session or invalid token — clean up stale token
+        if (typeof window !== 'undefined') {
+          localStorage.removeItem('asgard_token');
+        }
+        setUser(null);
+      })
       .finally(() => setLoading(false));
   }, []);
 
-  const login = (userData) => {
-    // Session cookie is already set by the server response — update UI state
+  const login = (userData, token) => {
+    if (token && typeof window !== 'undefined') {
+      localStorage.setItem('asgard_token', token);
+    }
     setUser(userData);
   };
 
@@ -26,9 +48,21 @@ export const AuthProvider = ({ children }) => {
     } catch {
       // Ignored
     }
-    // Server destroys session; clear UI state
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem('asgard_token');
+    }
     setUser(null);
   };
+
+  const handleOAuthCallback = useCallback(async (token) => {
+    if (token && typeof window !== 'undefined') {
+      localStorage.setItem('asgard_token', token);
+    }
+    const res = await api.get('/auth/me');
+    const userData = res.data?.data || null;
+    setUser(userData);
+    return userData;
+  }, []);
 
   const refreshUser = async () => {
     try {
@@ -36,13 +70,26 @@ export const AuthProvider = ({ children }) => {
       setUser(res.data?.data || null);
       return res.data?.data;
     } catch {
+      if (typeof window !== 'undefined') {
+        localStorage.removeItem('asgard_token');
+      }
       setUser(null);
       return null;
     }
   };
 
   return (
-    <AuthContext.Provider value={{ user, loading, login, logout, refreshUser, setUser }}>
+    <AuthContext.Provider
+      value={{
+        user,
+        loading,
+        login,
+        logout,
+        refreshUser,
+        setUser,
+        handleOAuthCallback,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );

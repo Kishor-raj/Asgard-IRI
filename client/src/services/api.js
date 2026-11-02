@@ -48,6 +48,21 @@ const api = axios.create({
   withCredentials: true, // Required: sends the session cookie on every request
 });
 
+// Request interceptor: automatically attach Authorization: Bearer <token>
+api.interceptors.request.use(
+  (config) => {
+    if (typeof window !== 'undefined') {
+      const token = localStorage.getItem('asgard_token');
+      if (token) {
+        config.headers = config.headers || {};
+        config.headers.Authorization = `Bearer ${token}`;
+      }
+    }
+    return config;
+  },
+  (err) => Promise.reject(err)
+);
+
 api.interceptors.response.use(
   (res) => res,
   (err) => {
@@ -70,9 +85,11 @@ api.interceptors.response.use(
         path === '/login' ||
         path === '/register' ||
         path === '/forgot-password' ||
-        path === '/reset-password';
+        path === '/reset-password' ||
+        path === '/auth/callback';
 
       if (!isAuthCheck && !isPublicRoute && typeof window !== 'undefined') {
+        localStorage.removeItem('asgard_token');
         window.location.href = '/login';
       }
     }
