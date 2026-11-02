@@ -30,7 +30,7 @@ export default function LoginPage() {
       setLoading(true);
       const res = await loginApi({ email, password });
       toast.success('Signed in successfully!');
-      login(res.data.user);
+      login(res.data.user, res.data.token);
       if (['super_admin', 'foundation_admin'].includes(res.data.user.role)) {
         navigate('/admin');
       } else {

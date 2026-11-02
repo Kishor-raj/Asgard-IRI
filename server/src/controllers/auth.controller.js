@@ -5,6 +5,7 @@ const pool = require('../config/db');
 const asyncHandler = require('../utils/asyncHandler');
 const { sendMail } = require('../utils/mailer');
 const { logAction } = require('../utils/audit');
+const { signToken } = require('../utils/token');
 
 // 1. POST /auth/register
 exports.register = asyncHandler(async (req, res) => {
@@ -108,61 +109,98 @@ exports.login = asyncHandler(async (req, res) => {
     return res.status(403).json({ success: false, error: 'Account is not active.' });
   }
 
+  // Generate JWT token
+  const token = signToken({
+    userId: user.id,
+    email: user.email,
+    role: user.role,
+  });
+
+  const isProduction = process.env.NODE_ENV === 'production';
+  const cookieSameSite = process.env.COOKIE_SAME_SITE || (isProduction ? 'none' : 'lax');
+  const cookieSecure = isProduction || cookieSameSite === 'none';
+
+  res.cookie('token', token, {
+    httpOnly: true,
+    secure: cookieSecure,
+    sameSite: cookieSameSite,
+    maxAge: 7 * 24 * 60 * 60 * 1000,
+    path: '/',
+  });
+
+  const respondWithSuccess = async () => {
+    // Record in sessions table
+    const tokenHash = crypto.createHash('sha256').update(token).digest('hex');
+    await pool.query(
+      `INSERT INTO sessions (user_id, token_hash, ip_address, user_agent, expires_at)
+       VALUES ($1, $2, $3, $4, NOW() + INTERVAL '7 days')`,
+      [user.id, tokenHash, req.ip || null, req.headers['user-agent'] || null]
+    ).catch(() => {});
+
+    res.status(200).json({
+      success: true,
+      data: {
+        token,
+        user: {
+          id: user.id,
+          email: user.email,
+          fullName: user.full_name,
+          role: user.role,
+          status: user.status,
+          profilePhoto: user.profile_photo,
+          bio: user.bio,
+          affiliation: user.affiliation || '',
+        },
+      },
+    });
+  };
+
   // Regenerate session to prevent session fixation
-  req.session.regenerate(async (err) => {
-    if (err) {
-      return res.status(500).json({ success: false, error: 'Failed to establish session.' });
-    }
-
-    req.session.userId = user.id;
-    req.session.role = user.role;
-
-    req.session.save(async (saveErr) => {
-      if (saveErr) {
-        return res.status(500).json({ success: false, error: 'Failed to save session.' });
+  if (req.session) {
+    req.session.regenerate(async (err) => {
+      if (err) {
+        return res.status(500).json({ success: false, error: 'Failed to establish session.' });
       }
 
-      // Record in sessions table
-      await pool.query(
-        `INSERT INTO sessions (user_id, ip_address, user_agent, expires_at)
-         VALUES ($1, $2, $3, NOW() + INTERVAL '7 days')`,
-        [user.id, req.ip || null, req.headers['user-agent'] || null]
-      ).catch(() => {});
+      req.session.userId = user.id;
+      req.session.role = user.role;
 
-      res.status(200).json({
-        success: true,
-        data: {
-          user: {
-            id: user.id,
-            email: user.email,
-            fullName: user.full_name,
-            role: user.role,
-            status: user.status,
-            profilePhoto: user.profile_photo,
-            bio: user.bio,
-            affiliation: user.affiliation || '',
-          },
-        },
+      req.session.save(async (saveErr) => {
+        if (saveErr) {
+          return res.status(500).json({ success: false, error: 'Failed to save session.' });
+        }
+        await respondWithSuccess();
       });
     });
-  });
+  } else {
+    await respondWithSuccess();
+  }
 });
 
 // 3. POST /auth/logout
 exports.logout = asyncHandler(async (req, res) => {
-  const userId = req.session?.userId;
-  req.session.destroy(async (err) => {
-    if (err) {
-      return res.status(500).json({ success: false, error: 'Could not log out.' });
-    }
-    res.clearCookie('connect.sid');
+  const userId = req.user?.id || req.session?.userId;
+  const isProduction = process.env.NODE_ENV === 'production';
+  const cookieSameSite = process.env.COOKIE_SAME_SITE || (isProduction ? 'none' : 'lax');
+  const cookieSecure = isProduction || cookieSameSite === 'none';
 
-    if (userId) {
-      await pool.query('DELETE FROM sessions WHERE user_id = $1', [userId]).catch(() => {});
-    }
+  res.clearCookie('connect.sid', { path: '/', secure: cookieSecure, sameSite: cookieSameSite });
+  res.clearCookie('token', { path: '/', secure: cookieSecure, sameSite: cookieSameSite });
 
+  if (userId) {
+    await pool.query('DELETE FROM sessions WHERE user_id = $1', [userId]).catch(() => {});
+  }
+
+  if (req.session) {
+    req.session.destroy((err) => {
+      if (err) {
+        return res.status(500).json({ success: false, error: 'Could not log out.' });
+      }
+      res.status(200).json({ success: true, message: 'Logged out successfully.' });
+    });
+  } else {
     res.status(200).json({ success: true, message: 'Logged out successfully.' });
-  });
+  }
 });
 
 // 4. POST /auth/forgot-password

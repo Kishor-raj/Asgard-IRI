@@ -16,28 +16,56 @@ const pool        = require('./config/db');
 const app = express();
 
 // Trust reverse proxy (required for Render/Heroku to properly handle HTTPS & secure cookies)
-if (process.env.NODE_ENV === 'production') {
-  app.set('trust proxy', 1);
-}
+app.set('trust proxy', 1);
 
 // Security & middleware
-app.use(helmet());
-app.use(cors({ origin: process.env.CLIENT_URL, credentials: true }));
+app.use(helmet({ crossOriginResourcePolicy: { policy: 'cross-origin' } }));
+
+const configuredClientUrl = (process.env.CLIENT_URL || '').trim().replace(/\/+$/, '');
+const allowedOrigins = [
+  'https://asgard-iri.vercel.app',
+  'http://localhost:5173',
+  'http://localhost:3000',
+  'http://localhost:5000',
+  configuredClientUrl,
+].filter(Boolean);
+
+app.use(cors({
+  origin: (origin, callback) => {
+    if (!origin) return callback(null, true);
+    const isExplicitlyAllowed = allowedOrigins.includes(origin);
+    const isVercelPreview = /^https:\/\/asgard-iri(-[a-z0-9-]+)?\.vercel\.app$/.test(origin);
+    if (isExplicitlyAllowed || isVercelPreview || process.env.NODE_ENV !== 'production') {
+      return callback(null, true);
+    }
+    return callback(new Error(`Origin ${origin} not allowed by CORS`));
+  },
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept', 'Origin'],
+}));
+
 app.use(morgan('dev'));
 app.use(compression());
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
 
 // Session store — persists sessions in PostgreSQL
+const isProduction = process.env.NODE_ENV === 'production';
+const cookieSameSite = process.env.COOKIE_SAME_SITE || (isProduction ? 'none' : 'lax');
+const cookieSecure = isProduction || cookieSameSite === 'none';
+
 app.use(session({
   store: new pgSession({ pool, tableName: 'user_sessions', createTableIfMissing: true }),
-  secret: process.env.SESSION_SECRET,
+  name: 'connect.sid',
+  secret: process.env.SESSION_SECRET || 'asgard-iri-secure-session-secret',
   resave: false,
   saveUninitialized: false,
+  proxy: true,
   cookie: {
     httpOnly: true,
-    secure: process.env.NODE_ENV === 'production',
-    sameSite: process.env.COOKIE_SAME_SITE || (process.env.NODE_ENV === 'production' ? 'none' : 'lax'),
+    secure: cookieSecure,
+    sameSite: cookieSameSite,
     maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
   },
 }));
@@ -53,8 +81,9 @@ const authLimiter = rateLimit({ windowMs: 15 * 60 * 1000, max: 20,
 app.use('/api/v1/auth', authLimiter);
 
 // Routes — Phase 0: scaffold all, controllers added per phase
-app.use('/api/v1/auth',          require('./routes/auth.routes'));
-app.use('/auth',                 require('./routes/auth.routes'));
+const authRoutes = require('./routes/auth.routes');
+app.use('/api/v1/auth',          authRoutes);
+app.use('/auth',                 authRoutes);
 app.use('/api/v1/researchers',   require('./routes/researcher.routes'));
 app.use('/api/v1/research',      require('./routes/research.routes'));
 app.use('/api/v1/journals',      require('./routes/journal.routes'));
@@ -77,25 +106,14 @@ app.use('/api/v1/home',          require('./routes/home.routes'));
 app.use('/api/v1/admin',         require('./routes/admin.routes'));
 app.use('/api/v1/settings',      require('./routes/settings.routes'));
 
-// Root endpoint & OAuth redirect handler if root URL is used as callback
+// Root endpoint & fallback OAuth redirect handler if root URL is used as callback
 app.get('/', (req, res, next) => {
   if (req.query.code) {
     return passport.authenticate('google', {
-      failureRedirect: `${process.env.CLIENT_URL || 'http://localhost:5173'}/login?error=oauth_failed`,
+      failureRedirect: `${authRoutes.getClientUrl()}/login?error=oauth_failed`,
+      session: true,
     })(req, res, () => {
-      const user = req.user;
-      if (!user) {
-        return res.redirect(`${process.env.CLIENT_URL || 'http://localhost:5173'}/login?error=oauth_failed`);
-      }
-      req.session.regenerate((regErr) => {
-        if (regErr) return res.redirect(`${process.env.CLIENT_URL || 'http://localhost:5173'}/login?error=oauth_failed`);
-        req.session.userId = user.id;
-        req.session.role = user.role;
-        req.session.save(() => {
-          const redirectPath = ['super_admin', 'foundation_admin'].includes(user.role) ? '/admin' : '/dashboard';
-          res.redirect(`${process.env.CLIENT_URL || 'http://localhost:5173'}${redirectPath}`);
-        });
-      });
+      authRoutes.createSessionAndRedirect(req, req.user, res);
     });
   }
   res.json({ status: 'ok', name: 'ASGARD-IRI API', ts: new Date() });

@@ -45,6 +45,7 @@ import LoginPage from '../pages/Auth/Login';
 import RegisterPage from '../pages/Auth/Register';
 import ForgotPasswordPage from '../pages/Auth/ForgotPassword';
 import ResetPasswordPage from '../pages/Auth/ResetPassword';
+import AuthCallbackPage from '../pages/Auth/Callback';
 
 // Dashboard Page
 import DashboardPage from '../pages/Dashboard';
@@ -339,6 +340,7 @@ export default function AppRoutes() {
       <Route path="/register" element={<RegisterPage />} />
       <Route path="/forgot-password" element={<ForgotPasswordPage />} />
       <Route path="/reset-password" element={<ResetPasswordPage />} />
+      <Route path="/auth/callback" element={<AuthCallbackPage />} />
 
       {/* User Dashboard */}
       <Route
