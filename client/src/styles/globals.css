@@ -156,3 +156,37 @@ body {
   color: var(--gold-bright);
   background: var(--ink-600);
 }
+
+/* ==============================================================================
+   ASGARD Luxury Institutional Auth & 404 Styles (from Docs HTML references)
+   ============================================================================== */
+
+@keyframes asgardRise {
+  from { opacity: 0; transform: translateY(18px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes asgardPulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50%      { opacity: 0.4; transform: scale(0.85); }
+}
+
+@keyframes asgardFloat1 {
+  0%, 100% { transform: translate(0, 0); }
+  50%      { transform: translate(40px, 30px); }
+}
+
+@keyframes asgardFloat2 {
+  0%, 100% { transform: translate(0, 0); }
+  50%      { transform: translate(-30px, -20px); }
+}
+
+.animate-asgard-rise {
+  animation: asgardRise 0.65s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.asgard-topo-pattern {
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='600' height='600' viewBox='0 0 600 600'><g fill='none' stroke='%23c9a35d' stroke-opacity='0.08' stroke-width='1'><path d='M-50 420 L120 240 L240 360 L360 180 L500 380 L660 220'/><path d='M-50 460 L140 300 L260 400 L380 250 L520 430 L660 300'/><path d='M-50 500 L160 360 L280 440 L400 320 L540 480 L660 380'/><circle cx='120' cy='240' r='3'/><circle cx='360' cy='180' r='3'/><circle cx='500' cy='380' r='3'/></g></svg>");
+  background-size: 600px 600px;
+}
+
