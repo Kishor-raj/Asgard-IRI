@@ -49,6 +49,7 @@ app.use(morgan('dev'));
 app.use(compression());
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
+app.use('/uploads', express.static(path.join(__dirname, '../../uploads')));
 
 // Session store — persists sessions in PostgreSQL
 const isProduction = process.env.NODE_ENV === 'production';

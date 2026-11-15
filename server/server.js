@@ -1,5 +1,6 @@
 const app = require('./src/app');
 const { ensureAdminUser } = require('./src/utils/seedAdmin');
+const { verifyConnection } = require('./src/utils/mailer');
 const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, async () => {
@@ -11,6 +12,17 @@ app.listen(PORT, async () => {
     }
   } catch (err) {
     console.warn(`[Admin] Could not auto-sync admin on startup: ${err.message}`);
+  }
+
+  try {
+    const smtpStatus = await verifyConnection();
+    if (smtpStatus.success) {
+      console.log(`[Mailer] SMTP connection verified successfully (Ready to send automated emails via ${process.env.SMTP_USER})`);
+    } else {
+      console.warn(`[Mailer] SMTP configuration notice: ${smtpStatus.error}`);
+    }
+  } catch (err) {
+    console.warn(`[Mailer] SMTP verification failed on startup: ${err.message}`);
   }
 });
 
